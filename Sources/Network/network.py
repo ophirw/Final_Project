@@ -44,9 +44,7 @@ class Network():
             print(f"layer: {output.shape}")
         return output
     
-    def backprop_step(self, input : np.ndarray) -> np.ndarray:
-        global epoch_number
-        epoch_number += 1
+    def backprop_step(self, input : np.ndarray, backprop_step_number : int) -> np.ndarray:
         forwardContexts = []
 
         output = input
@@ -59,7 +57,8 @@ class Network():
 
         dL_dOutput = self.dLoss(output)
         for i in range(len(self.layers)-1, -1, -1):
-            dL_dOutput = self.layers[i].backprop(dL_dOutput, forwardContexts[i])
+            dL_dOutput = self.layers[i].backprop(dL_dOutput, forwardContexts[i], backprop_step_number)
+            forwardContexts[i] = None
             print(f"layer: {dL_dOutput.shape}")
         
         return cost
@@ -82,12 +81,15 @@ class Network():
         return self.triplet_loss(APN_triplet[0], APN_triplet[1], APN_triplet[2]) != 0
     def dLossdAPN(self, APN_triplet):
         A, P, N = APN_triplet
-        return np.array([((A-P)/self.euclid_dist(A, P))-((A-N)/self.euclid_dist(A, N)), 
-                         (P-A)/(self.euclid_dist(A, P)), 
-                         (A-N)/(self.euclid_dist(A, N))])
+        #return np.array([((A-P)/self.euclid_dist(A, P))-((A-N)/self.euclid_dist(A, N)), 
+        #                 (P-A)/(self.euclid_dist(A, P)), 
+        #                 (A-N)/(self.euclid_dist(A, N))])
+        return np.array([2*(N-P),
+                         -2*(A-P),
+                         2*(A-N)])
     
-    def euclid_dist(self, v1, v2):
-        return np.linalg.norm(v1-v2)
+    def euclid_dist(self, v1, v2) -> np.float64:
+        return (np.linalg.norm(v1-v2)**2)
     
     def saveNetwork(self):
         with open("./NetworkState", 'wb') as f:

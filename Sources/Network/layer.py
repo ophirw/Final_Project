@@ -8,6 +8,6 @@ class Layer():
     def forward(self, input : np.ndarray) -> PropagationContext:
         raise NotImplementedError()
     
-    def backprop(self, dL_dOut : np.ndarray, forwardContext : PropagationContext) -> np.ndarray:
+    def backprop(self, dL_dOut : np.ndarray, forwardContext : PropagationContext, step_number : int) -> np.ndarray:
         raise NotImplementedError
     

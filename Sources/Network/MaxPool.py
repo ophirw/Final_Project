@@ -26,7 +26,7 @@ class MaxPool(Layer):
         result.pos_max = max_pos_mask
         return result
     
-    def backprop(self, dL_dOut : np.ndarray, forwardContext : PropagationContext) -> np.ndarray:
+    def backprop(self, dL_dOut : np.ndarray, forwardContext : PropagationContext, step_number : int) -> np.ndarray:
         pos_max = forwardContext.pos_max
         ib, iapn, ic, ih, iw, iy, ix = np.where(pos_max == 1)
         values = dL_dOut[ib, iapn, ic, ih, iw].flatten()

@@ -1,20 +1,29 @@
-import numpy as np
 from Network.network import Network
-from Network.globalVariables import epoch_number
+from Network.globalVariables import mini_batch_size
 import gc
+from DataPreProccessor import DataPreProccessor
+import threading
 
 class Trainer():
-    def __init__(self, input_shape) -> None:
-        self.net = Network(input_shape)
+    def __init__(self) -> None:
+        self.data = DataPreProccessor()
 
     def Train(self, net : Network, epochs : int):
-        global epoch_number
-        epoch_number = 0
+        thread = threading.Thread(target=self.train_threaded, args=(net, epochs))
+        thread.run()
 
-        costs = []
-        accuracy = 0
-        for i in range(epoch_number):
-            training_data_batch = DataPreProccessor.get_training_batch()
-            net.backprop_step(training_data_batch)
-            del training_data_batch
-            gc.collect()
+    def train_threaded(self, net : Network, epochs : int):
+        training_costs = []
+        backprop_step_number = 0
+        for i in range(epochs):
+            for j in range(len(self.data.triplets)//mini_batch_size):
+                backprop_step_number += 1
+                training_data_batch = self.data.get_training_batch(j)
+                print(f"starting batch number {j}")
+                cost_before_backprop = net.backprop_step(training_data_batch, backprop_step_number)
+                print(f"cost from last batch is: {cost_before_backprop}")
+                training_costs.append((backprop_step_number, cost_before_backprop))
+                del training_data_batch
+                gc.collect()
+
+        net.saveNetwork()

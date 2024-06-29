@@ -34,7 +34,7 @@ class TrainableLayer(Layer):
         return result
     
     # implements Adam learning for layer, and returns the backpropagating tensor for the next layer
-    def backprop(self, dL_dOut : np.ndarray, forwardContext : PropagationContext) -> np.ndarray:
+    def backprop(self, dL_dOut : np.ndarray, forwardContext : PropagationContext, step_number : int) -> np.ndarray:
         input_activations = forwardContext.input_activations
         output_Zs = forwardContext.output_Zs
 
@@ -48,7 +48,7 @@ class TrainableLayer(Layer):
         self.biases_first_moments = beta1*self.biases_first_moments + (1-beta1)*dL_dB
         self.biases_second_moments = beta2*self.biases_second_moments + (1-beta2)*(dL_dB**2)
 
-        alpha_t = alpha*np.sqrt(1-(beta2**epoch_number))/(1-(beta1**epoch_number))
+        alpha_t = alpha*np.sqrt(1-(beta2**step_number))/(1-(beta1**step_number))
 
         self.weights -= alpha_t*self.weights_first_moments/(np.sqrt(self.weights_second_moments)+eps)
         self.biases -= alpha_t*self.biases_first_moments/(np.sqrt(self.biases_second_moments)+eps)

@@ -1,7 +1,5 @@
 from .observableModel import ObservableModel
 from time import time
-import cv2
-from matplotlib import pyplot as plt
 
 class FramesCaptured(ObservableModel):
     def __init__(self):
