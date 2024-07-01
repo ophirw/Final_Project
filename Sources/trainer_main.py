@@ -7,11 +7,11 @@ from Views.root import Root
 
 def main():
     net = Network.loadNetwork()
-    trainer = Trainer()
 
     root = Root()
     model = TrainerModel(net)
     view = TrainerView(root, model)
+    trainer = Trainer(model)
     controller = TrainerController(model, view, trainer)
     view.tkraise()
     root.mainloop()

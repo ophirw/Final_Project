@@ -14,7 +14,7 @@ class ImageRef():
 
 class DataPreProccessor():
     def __init__(self) -> None:
-        self.PATH ="C:/Final_Project/Data/"
+        self.PATH ="Data/"
         self.negativePairs: dict[str, tuple[int, list[ImageRef]]] = self.build_negative_dict()
         self.positivePairs: list[tuple[ImageRef]] = self.build_positive_pairs()
         random.shuffle(self.positivePairs)
@@ -38,12 +38,12 @@ class DataPreProccessor():
         return arr
 
     def pre_proccess(self, arr : np.ndarray):
-        return arr.reshape(image_size)
+        return arr.reshape(image_size)/255
 
     def build_triplets(self):
         triplets : list[tuple[ImageRef]] = []
 
-        for index, posPair in enumerate(self.positivePairs):
+        for posPair in self.positivePairs:
             try:
                 nextNegative, negativesList = self.negativePairs[posPair[0].name]
                 negative = negativesList[nextNegative]

@@ -15,6 +15,9 @@ class TrainerView(Frame):
         self.train_existing_checkbox.grid(row=0, column=2)
 
         self.starttrain_buttn = Button(self, text="Train")
-        self.starttrain_buttn.grid(row=1, column=1)
+        self.starttrain_buttn.grid(row=1, column=0)
+
+        self.stoptrain_buttn = Button(self, text="stop training", state='disabled')
+        self.stoptrain_buttn.grid(row=1, column=1)
 
         self.grid(row=0, column=0, sticky="nsew")
