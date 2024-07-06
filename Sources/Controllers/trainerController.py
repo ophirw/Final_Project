@@ -15,6 +15,7 @@ class TrainerController:
         self.view.train_existing_checkbox.config(variable=self.model.train_existing_net)
         self.view.starttrain_buttn.config(command=self.start_training)
         self.view.stoptrain_buttn.config(command=self.stop_training)
+        self.model.add_event_listener("added_cost", self.view.update_graph)
 
     def start_training(self):
         if not self.model.train_existing_net or self.model.network is None:

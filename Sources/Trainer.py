@@ -30,8 +30,9 @@ class Trainer():
                 print(f"starting batch number {j}")
                 cost_before_backprop = net.backprop_step(training_data_batch, backprop_step_number)
 
-                self.model.costs.append(cost_before_backprop)
+                self.model.add_cost(cost_before_backprop)
                 print(cost_before_backprop)
+                ## test accuracy !!
 
                 del training_data_batch
                 gc.collect()

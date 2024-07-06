@@ -5,8 +5,8 @@ image_size = (3, 250, 250)
 # HyperParams
 beta1 = 0.9 # for decay of first-momentum
 beta2 = 0.999 # for decay of second-momentum
-alpha = 0.001 # initial learning rate
-t = 0.5 # tolerance for how close images should be to be called "same"
+alpha = 3e-3 # initial learning rate
+t = 0.3 # tolerance for how close images should be to be called "same"
 feature_vector_size = 128
 mini_batch_size = 16
 amount_of_epochs = 3

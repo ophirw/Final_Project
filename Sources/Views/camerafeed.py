@@ -2,6 +2,7 @@ from tkinter import Frame, Canvas
 import cv2
 from Models.main import Model
 import PIL.Image, PIL.ImageTk
+from DataPreProccessor import DataPreProccessor as image_proc
 from time import time
 
 
@@ -25,23 +26,26 @@ class CameraFeedView(Frame):
     def update_image(self, root):
 
         image = self.getImage(self.vid_source)
-
-        self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(image))
+        try:
+            bounded_image = image_proc.detectface(image)[1]
+        except ValueError:
+            bounded_image = image
+        self.photo = PIL.ImageTk.PhotoImage(image = PIL.Image.fromarray(bounded_image))
         self.canvas.create_image(0, 0, image = self.photo, anchor='nw') # show frame on screen
         
         data = self.model.framescaptured # shortening var name for convenience
 
         if (data.is_started and self.is_time_to_take_image(data)):
-            data.add_image(image)
+            data.add_image(image_proc.pre_proccess(image))
 
         if self.winfo_viewable() and (len(data.images) < data.requested_num_of_images or not data.is_started):
             root.after(self.delay, lambda: self.update_image(root))
 
     def getImage(self, capturer):
-        ret, image = capturer.read()
+        ret, image = capturer.read() #image is BGR
         if not ret:
             raise Exception("Can't recieve image")
-        return cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
+        return cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB) #returns RGB
 
     def is_time_to_take_image(self, data_model) -> bool:
         return ((int(time()*1000)) >= 
