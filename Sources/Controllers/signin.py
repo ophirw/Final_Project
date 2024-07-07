@@ -2,7 +2,7 @@ from Views.main import View
 from Models.main import Model
 from tkinter import Frame
 from Database import database
-from ..DataPreProccessor import DataPreProccessor
+from DataPreProccessor import DataPreProccessor
 import numpy as np
 
 class SignInController:
@@ -26,8 +26,7 @@ class SignInController:
 
     def attempt_sign_in(self):
         db = database()
-        feature_vectors = []
-        for im in self.model.framescaptured.images:
-            feature_vectors.append(np.squeeze(self.model.network.feedforward(DataPreProccessor.from_camera(im)), axis=(0, 1)))
+        imgs = np.array([np.array([im]) for im in self.model.framescaptured.images])
+        feature_vectors = np.squeeze(self.model.network.feedforward(imgs), axis=1)
         user = db.find_match(feature_vectors) # None if not found
         self.model.user.set_user(user)

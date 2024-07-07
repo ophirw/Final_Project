@@ -31,7 +31,7 @@ class Network():
         self.layers.append(Conv((64, 32, 3, 3)))                        # -> (100, 3, 64, 27, 27)
         self.layers.append(MaxPool(3))                                  # -> (100, 3, 64, 9, 9)
         self.layers.append(Flatten())                                   # -> (100, 3, 5184)
-        self.layers.append(Dense((1024, 64*((input_shape[-1]//27)**2))))# -> (100, 3, 1024)
+        self.layers.append(Dense((1024, 64*((self.input_shape[-1]//27)**2))))# -> (100, 3, 1024)
         self.layers.append(Dense((256, 1024)))                          # -> (100, 3, 256)
         self.layers.append(Dense((feature_vector_size, 256)))           # -> (100, 3, 128)
 
@@ -59,16 +59,14 @@ class Network():
         for i in range(len(self.layers)-1, -1, -1):
             dL_dOutput = self.layers[i].backprop(dL_dOutput, forwardContexts[i], backprop_step_number)
             forwardContexts[i] = None
-            print(f"layer: {dL_dOutput.shape}")
         
         return cost
-
 
     def cost(self, data : np.ndarray) -> np.float64:
         return np.mean([self.triplet_loss(A, P, N) for A, P, N in data])
     
     def triplet_loss(self, Anchor : np.ndarray, Positive : np.ndarray, Negative : np.ndarray, tolerance=(t+0.1)) -> np.float64:
-        return max(self.euclid_dist(Anchor, Positive)-self.euclid_dist(Anchor, Negative)+tolerance, 0)
+        return max(self.euclid_dist(Anchor, Positive)-self.euclid_dist(Anchor, Negative)+tolerance, 0.0)
     
     def dLoss(self, vector):
         result = np.zeros((self.input_shape[:2]+(feature_vector_size,)))

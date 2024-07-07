@@ -25,7 +25,7 @@ class database():
             raise Exception("No such user in database")
         return PIL.open(io.BytesIO(results[0][0]))
     
-    def find_match(self, vectors : list[np.ndarray], tolerance : float=t):
+    def find_match(self, vectors : np.ndarray, tolerance : float=t):
         users = self.execute('SELECT id, feature_vector FROM users')
         min_distance = None
         min_distance_id = None
@@ -33,7 +33,7 @@ class database():
             sum_distances = 0
             for v in vectors:
                 sum_distances += np.linalg.norm(fv-v)
-            avg_distance = sum_distances/len(vectors)
+            avg_distance = sum_distances/vectors.shape[0]
             if min_distance is None or avg_distance < min_distance:
                 min_distance = avg_distance
                 min_distance_id = id
