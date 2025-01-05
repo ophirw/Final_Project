@@ -8,7 +8,7 @@ beta2 = 0.999 # for decay of second-momentum
 alpha = 3e-3 # initial learning rate
 t = 0.3 # tolerance for how close images should be to be called "same"
 feature_vector_size = 128
-mini_batch_size = 16
+mini_batch_size = 32
 amount_of_epochs = 3
 
 eps = 1e-8 # to prevent dividing by 0

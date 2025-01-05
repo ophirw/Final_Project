@@ -23,12 +23,12 @@ class DataPreProccessor():
     def get_image(self, im_ref : ImageRef):
         im = PIL.Image.open(self.PATH+im_ref.get_path())
         im_arr = np.array(im)  # im_arr is RGB
-        im_arr = self.pre_proccess(im_arr)
+        im_arr = self.pre_proccess(im_arr, im_ref)
         return im_arr # is RGB
     
     @staticmethod
-    def pre_proccess(arr : np.ndarray):
-        face_arr = DataPreProccessor.detectface(arr)[0] # arr and face_arr are RGB
+    def pre_proccess(arr : np.ndarray, im_ref : ImageRef):
+        face_arr = DataPreProccessor.detectface(arr, im_ref)[0] # arr and face_arr are RGB
         if face_arr.shape[0] != face_arr.shape[1]:
             raise ValueError("cropped face isn't square")
         elif face_arr.shape[0] > 250:
@@ -37,18 +37,26 @@ class DataPreProccessor():
         return cropped_face_arr_CHW.reshape(image_size)/255.0
     
     @staticmethod
-    def detectface(image : np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    def detectface(image : np.ndarray, im_ref : ImageRef) -> tuple[np.ndarray, np.ndarray]:
         # image is RGB
         BGRimage = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         grayscaleimage = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
         face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         faces = face_cascade.detectMultiScale(grayscaleimage, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+        faces = sorted(faces, key=lambda rect: rect[2] * rect[3], reverse=True)
         if (len(faces) == 0):
             raise ValueError("No face detected in image.")
         elif (len(faces) > 1):
-            raise ValueError("more than one face detected in image.")
-        
+            print(f"More than one face detected in image {im_ref.name}.") #TODO: consider raising exception for whoever has the im_ref to print the name of the image.
+            #border_color = (0,0,255)
+            #for face in faces:
+            #    (x, y, w, h) = face
+            #    cv2.rectangle(BGRimage, (x, y), (x+w, y+h), border_color, 2)
+            #    border_color=(0,0,0)
+            #cv2.imshow('More than one face in image detected', BGRimage)
+            #cv2.waitKey(0)
+
         (x, y, w, h) = faces[0]
         cv2.rectangle(BGRimage, (x, y), (x+w, y+h), (0, 0, 0), 2)
         faceBGR = BGRimage[y:y+h, x:x+w]

@@ -24,11 +24,11 @@ class Network():
         self.layers : list[Layer] = []
         self.input_shape = input_shape # -> (100, 3, 3, 250, 250)
 
-        self.layers.append(Conv((16, self.input_shape[2], 7, 7)))       # -> (100, 3, 16, 250, 250)
+        self.layers.append(Conv((16, self.input_shape[2], 3, 3)))       # -> (100, 3, 16, 250, 250)
         self.layers.append(MaxPool(3))                                  # -> (100, 3, 16, 83, 83)
         self.layers.append(Conv((32, 16, 5, 5)))                        # -> (100, 3, 32, 83, 83)
         self.layers.append(MaxPool(3))                                  # -> (100, 3, 32, 27, 27)
-        self.layers.append(Conv((64, 32, 3, 3)))                        # -> (100, 3, 64, 27, 27)
+        self.layers.append(Conv((64, 32, 7, 7)))                        # -> (100, 3, 64, 27, 27)
         self.layers.append(MaxPool(3))                                  # -> (100, 3, 64, 9, 9)
         self.layers.append(Flatten())                                   # -> (100, 3, 5184)
         self.layers.append(Dense((1024, 64*((self.input_shape[-1]//27)**2))))# -> (100, 3, 1024)
